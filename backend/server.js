@@ -36,6 +36,6 @@ mongoose.connect(mongoURI)
   .catch(err => console.log('MongoDB connection error (App will still run for UI testing):', err.message));
 
 const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT} (0.0.0.0)`);
 });

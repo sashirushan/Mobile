@@ -35,7 +35,7 @@ const Rentals = () => {
         Object.entries(filters).filter(([_, v]) => v !== '')
       ).toString();
 
-      const response = await fetch(`http://localhost:5000/api/rentals?${queryParams}`);
+      const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/rentals?${queryParams}`);
       const data = await response.json();
       setVehicles(data);
     } catch (error) {

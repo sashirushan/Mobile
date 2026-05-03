@@ -7,13 +7,15 @@ import { API_BASE_URL } from '../../src/config/api';
 
 export default function ProfileScreen() {
   const [user, setUser] = useState(null);
+  const [inquiries, setInquiries] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfileData();
   }, []);
 
-  const fetchProfile = async () => {
+  const fetchProfileData = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
       if (!token) {
@@ -21,13 +23,26 @@ export default function ProfileScreen() {
         return;
       }
       
+      // Fetch User Profile
       const response = await axios.get(`${API_BASE_URL}/api/users`);
       const savedRole = await AsyncStorage.getItem('role');
       const currentUser = response.data.find(u => u.role === savedRole) || response.data[0];
-      
       setUser(currentUser);
+
+      // Fetch Bookings
+      if (currentUser && currentUser._id) {
+        const bookingsRes = await axios.get(`${API_BASE_URL}/api/bookings/user/${currentUser._id}`);
+        setBookings(bookingsRes.data);
+      }
+
+      // Fetch Inquiries
+      if (currentUser && currentUser.email) {
+        const inquiriesRes = await axios.get(`${API_BASE_URL}/api/inquiries/user/${currentUser.email}`);
+        setInquiries(inquiriesRes.data);
+      }
+
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error fetching profile data:', error);
       Alert.alert('Error', 'Failed to load profile details.');
     } finally {
       setLoading(false);
@@ -57,6 +72,19 @@ export default function ProfileScreen() {
     );
   }
 
+  const getStatusColor = (status) => {
+    switch(status?.toLowerCase()) {
+      case 'confirmed':
+      case 'accepted':
+      case 'replied':
+      case 'completed': return '#34d399';
+      case 'rejected':
+      case 'cancelled': return '#d32f2f';
+      case 'pending': return '#fbbf24';
+      default: return '#aaa';
+    }
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       <View style={styles.header}>
@@ -69,26 +97,80 @@ export default function ProfileScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Contact Information</Text>
-        
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Email</Text>
           <Text style={styles.infoValue}>{user?.email || 'Not provided'}</Text>
         </View>
-        
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Phone</Text>
           <Text style={styles.infoValue}>{user?.phone || 'Not provided'}</Text>
         </View>
-        
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Address</Text>
           <Text style={styles.infoValue}>{user?.address || 'Not provided'}</Text>
         </View>
       </View>
 
+      {/* Bookings Dashboard */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>My Bookings</Text>
+        {bookings.length === 0 ? (
+          <Text style={styles.emptyText}>You have no rental bookings.</Text>
+        ) : (
+          bookings.map((booking) => (
+            <View key={booking._id} style={styles.itemCard}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTitle}>
+                  {booking.vehicle?.make} {booking.vehicle?.model}
+                </Text>
+                <Text style={[styles.itemStatus, { color: getStatusColor(booking.status) }]}>
+                  {booking.status}
+                </Text>
+              </View>
+              <Text style={styles.itemDetail}>
+                From: {new Date(booking.startDate).toLocaleDateString()}
+              </Text>
+              {booking.endDate && (
+                <Text style={styles.itemDetail}>
+                  To: {new Date(booking.endDate).toLocaleDateString()}
+                </Text>
+              )}
+              <Text style={styles.itemPrice}>Rs. {booking.totalPrice?.toLocaleString()}</Text>
+            </View>
+          ))
+        )}
+      </View>
+
+      {/* Inquiries Dashboard */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>My Inquiries</Text>
+        {inquiries.length === 0 ? (
+          <Text style={styles.emptyText}>You have no pending inquiries.</Text>
+        ) : (
+          inquiries.map((inquiry) => (
+            <View key={inquiry._id} style={styles.itemCard}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemTitle}>
+                  {inquiry.vehicleId?.make} {inquiry.vehicleId?.model}
+                </Text>
+                <Text style={[styles.itemStatus, { color: getStatusColor(inquiry.status) }]}>
+                  {inquiry.status}
+                </Text>
+              </View>
+              <Text style={styles.itemMessage}>"{inquiry.message}"</Text>
+              {inquiry.replyMessage && (
+                <View style={styles.replyBox}>
+                  <Text style={styles.replyLabel}>Samarasinghe Motors replied:</Text>
+                  <Text style={styles.replyText}>{inquiry.replyMessage}</Text>
+                </View>
+              )}
+            </View>
+          ))
+        )}
+      </View>
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account Actions</Text>
-        
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
@@ -104,6 +186,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+    paddingBottom: 50,
   },
   centerContent: {
     flex: 1,
@@ -113,32 +196,32 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 30,
     marginTop: 20,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     backgroundColor: '#d32f2f',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 10,
   },
   avatarText: {
     color: '#fff',
-    fontSize: 40,
+    fontSize: 36,
     fontWeight: 'bold',
   },
   name: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   role: {
     color: '#aaa',
-    fontSize: 16,
+    fontSize: 15,
   },
   section: {
     backgroundColor: '#1a1a1a',
@@ -164,14 +247,80 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     color: '#aaa',
-    fontSize: 16,
+    fontSize: 15,
     flex: 1,
   },
   infoValue: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 15,
     flex: 2,
     textAlign: 'right',
+  },
+  emptyText: {
+    color: '#888',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
+  itemCard: {
+    backgroundColor: '#222',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  itemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  itemTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    flex: 1,
+  },
+  itemStatus: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  itemDetail: {
+    color: '#aaa',
+    fontSize: 14,
+    marginBottom: 2,
+  },
+  itemPrice: {
+    color: '#34d399',
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginTop: 5,
+  },
+  itemMessage: {
+    color: '#ccc',
+    fontSize: 14,
+    fontStyle: 'italic',
+    marginTop: 5,
+  },
+  replyBox: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: 'rgba(52, 211, 153, 0.1)',
+    borderRadius: 6,
+    borderLeftWidth: 3,
+    borderLeftColor: '#34d399',
+  },
+  replyLabel: {
+    color: '#34d399',
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 3,
+  },
+  replyText: {
+    color: '#fff',
+    fontSize: 14,
   },
   logoutButton: {
     backgroundColor: 'rgba(211, 47, 47, 0.1)',

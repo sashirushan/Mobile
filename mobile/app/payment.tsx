@@ -123,108 +123,115 @@ export default function PaymentScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#34d399" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Complete Payment</Text>
-      </View>
-
-      <View style={styles.summaryCard}>
-        <Text style={styles.sectionTitle}>Booking Summary</Text>
-        
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Vehicle:</Text>
-          <Text style={styles.summaryValue}>{vehicle.make} {vehicle.model}</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Rental Period:</Text>
-          <Text style={styles.summaryValue}>{start.toLocaleDateString()} to {end.toLocaleDateString()}</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Duration:</Text>
-          <Text style={styles.summaryValue}>{totalDays} {totalDays === 1 ? 'day' : 'days'}</Text>
-        </View>
-        <View style={styles.summaryRow}>
-          <Text style={styles.summaryLabel}>Rate:</Text>
-          <Text style={styles.summaryValue}>Rs. {vehicle.pricePerDay.toLocaleString()} / day</Text>
-        </View>
-        
-        <View style={styles.divider} />
-        
-        <View style={styles.promoSection}>
-          <Text style={styles.promoLabel}>Have a Promo Code?</Text>
-          <View style={styles.promoInputRow}>
-            <TextInput
-              style={styles.promoInput}
-              placeholder="Enter code"
-              placeholderTextColor="#888"
-              value={promoCode}
-              onChangeText={(text) => setPromoCode(text.toUpperCase())}
-              editable={discountPercentage === 0}
-            />
-            <TouchableOpacity 
-              style={[styles.promoButton, discountPercentage > 0 && styles.promoRemoveButton]} 
-              onPress={discountPercentage > 0 ? () => { setDiscountPercentage(0); setPromoCode(''); } : handleApplyPromo}
-              disabled={applyingPromo || (!promoCode && discountPercentage === 0)}
-            >
-              <Text style={styles.promoButtonText}>
-                {applyingPromo ? '...' : discountPercentage > 0 ? 'Remove' : 'Apply'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+    <ImageBackground 
+      source={require('../assets/images/payment_bg.png')} 
+      style={styles.container}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color="#34d399" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Complete Payment</Text>
         </View>
 
-        {discountPercentage > 0 && (
+        <View style={styles.summaryCard}>
+          <Text style={styles.sectionTitle}>Booking Summary</Text>
+          
           <View style={styles.summaryRow}>
-            <Text style={[styles.summaryLabel, { color: '#34d399' }]}>Discount ({discountPercentage}%):</Text>
-            <Text style={[styles.summaryValue, { color: '#34d399' }]}>- Rs. {discountAmount.toLocaleString()}</Text>
+            <Text style={styles.summaryLabel}>Vehicle:</Text>
+            <Text style={styles.summaryValue}>{vehicle.make} {vehicle.model}</Text>
           </View>
-        )}
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Rental Period:</Text>
+            <Text style={styles.summaryValue}>{start.toLocaleDateString()} to {end.toLocaleDateString()}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Duration:</Text>
+            <Text style={styles.summaryValue}>{totalDays} {totalDays === 1 ? 'day' : 'days'}</Text>
+          </View>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>Rate:</Text>
+            <Text style={styles.summaryValue}>Rs. {vehicle.pricePerDay.toLocaleString()} / day</Text>
+          </View>
+          
+          <View style={styles.divider} />
+          
+          <View style={styles.promoSection}>
+            <Text style={styles.promoLabel}>Have a Promo Code?</Text>
+            <View style={styles.promoInputRow}>
+              <TextInput
+                style={styles.promoInput}
+                placeholder="Enter code"
+                placeholderTextColor="#888"
+                value={promoCode}
+                onChangeText={(text) => setPromoCode(text.toUpperCase())}
+                editable={discountPercentage === 0}
+              />
+              <TouchableOpacity 
+                style={[styles.promoButton, discountPercentage > 0 && styles.promoRemoveButton]} 
+                onPress={discountPercentage > 0 ? () => { setDiscountPercentage(0); setPromoCode(''); } : handleApplyPromo}
+                disabled={applyingPromo || (!promoCode && discountPercentage === 0)}
+              >
+                <Text style={styles.promoButtonText}>
+                  {applyingPromo ? '...' : discountPercentage > 0 ? 'Remove' : 'Apply'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-        <View style={styles.divider} />
-        
-        <View style={styles.summaryRow}>
-          <Text style={styles.totalLabel}>Total Amount:</Text>
-          <Text style={styles.totalValue}>Rs. {finalAmount.toLocaleString()}</Text>
-        </View>
-      </View>
-
-      <View style={styles.uploadCard}>
-        <Text style={styles.sectionTitle}>Bank Transfer Details</Text>
-        <View style={styles.bankDetails}>
-          <Text style={styles.bankName}>Samarasinghe Motors</Text>
-          <Text style={styles.bankAcc}>82469272</Text>
-          <Text style={styles.bankDesc}>People's Bank Kandy</Text>
-        </View>
-        
-        <Text style={styles.uploadInstructions}>Please transfer the total amount and upload the receipt image below to confirm your booking.</Text>
-        
-        <TouchableOpacity style={styles.uploadArea} onPress={pickImage}>
-          {receiptImage ? (
-            <Image source={{ uri: receiptImage }} style={styles.receiptPreview} resizeMode="cover" />
-          ) : (
-            <View style={styles.uploadPlaceholder}>
-              <Ionicons name="cloud-upload-outline" size={40} color="#34d399" />
-              <Text style={styles.uploadText}>Tap to select image</Text>
+          {discountPercentage > 0 && (
+            <View style={styles.summaryRow}>
+              <Text style={[styles.summaryLabel, { color: '#34d399' }]}>Discount ({discountPercentage}%):</Text>
+              <Text style={[styles.summaryValue, { color: '#34d399' }]}>- Rs. {discountAmount.toLocaleString()}</Text>
             </View>
           )}
-        </TouchableOpacity>
-      </View>
 
-      <TouchableOpacity 
-        style={[styles.submitButton, loading && styles.disabledButton]} 
-        onPress={handlePaymentSubmit}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#111" />
-        ) : (
-          <Text style={styles.submitButtonText}>Confirm Booking & Upload Receipt</Text>
-        )}
-      </TouchableOpacity>
-    </ScrollView>
+          <View style={styles.divider} />
+          
+          <View style={styles.summaryRow}>
+            <Text style={styles.totalLabel}>Total Amount:</Text>
+            <Text style={styles.totalValue}>Rs. {finalAmount.toLocaleString()}</Text>
+          </View>
+        </View>
+
+        <View style={styles.uploadCard}>
+          <Text style={styles.sectionTitle}>Bank Transfer Details</Text>
+          <View style={styles.bankDetails}>
+            <Text style={styles.bankName}>Samarasinghe Motors</Text>
+            <Text style={styles.bankAcc}>82469272</Text>
+            <Text style={styles.bankDesc}>People's Bank Kandy</Text>
+          </View>
+          
+          <Text style={styles.uploadInstructions}>Please transfer the total amount and upload the receipt image below to confirm your booking.</Text>
+          
+          <TouchableOpacity style={styles.uploadArea} onPress={pickImage}>
+            {receiptImage ? (
+              <Image source={{ uri: receiptImage }} style={styles.receiptPreview} resizeMode="cover" />
+            ) : (
+              <View style={styles.uploadPlaceholder}>
+                <Ionicons name="cloud-upload-outline" size={40} color="#34d399" />
+                <Text style={styles.uploadText}>Tap to select image</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity 
+          style={[styles.submitButton, loading && styles.disabledButton]} 
+          onPress={handlePaymentSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#111" />
+          ) : (
+            <Text style={styles.submitButtonText}>Confirm Booking & Upload Receipt</Text>
+          )}
+        </TouchableOpacity>
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
@@ -232,6 +239,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.85)',
   },
   scrollContent: {
     padding: 20,

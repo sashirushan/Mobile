@@ -15,7 +15,7 @@ const AdminRentals = ({ onDownloadReport }) => {
   const fetchVehicles = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/rentals');
+      const res = await axios.get('https://ravishing-illumination-production.up.railway.app/api/rentals');
       setVehicles(res.data);
     } catch (err) {
       console.error(err);
@@ -41,7 +41,7 @@ const AdminRentals = ({ onDownloadReport }) => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/api/rentals/${id}/status`, { status: newStatus });
+      await axios.put(`https://ravishing-illumination-production.up.railway.app/api/rentals/${id}/status`, { status: newStatus });
       fetchVehicles();
     } catch (err) {
       console.error('Failed to update status', err);
@@ -52,7 +52,7 @@ const AdminRentals = ({ onDownloadReport }) => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this rental vehicle?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/rentals/${id}`);
+        await axios.delete(`https://ravishing-illumination-production.up.railway.app/api/rentals/${id}`);
         fetchVehicles();
       } catch (err) {
         console.error(err);
@@ -64,9 +64,9 @@ const AdminRentals = ({ onDownloadReport }) => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/rentals/${editingId}`, formData);
+        await axios.put(`https://ravishing-illumination-production.up.railway.app/api/rentals/${editingId}`, formData);
       } else {
-        await axios.post('http://localhost:5000/api/rentals', formData);
+        await axios.post('https://ravishing-illumination-production.up.railway.app/api/rentals', formData);
       }
       setIsModalOpen(false);
       fetchVehicles();

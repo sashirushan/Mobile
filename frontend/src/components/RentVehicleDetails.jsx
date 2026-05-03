@@ -19,7 +19,7 @@ const RentVehicleDetails = () => {
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/rentals/${id}`);
+        const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/rentals/${id}`);
         if (!response.ok) throw new Error('Vehicle not found');
         const data = await response.json();
         setVehicle(data);
@@ -32,7 +32,7 @@ const RentVehicleDetails = () => {
 
     const fetchPromotions = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/promotions`);
+        const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/promotions`);
         const data = await response.json();
         setPromotions(data.filter(p => p.type === 'Rental' && p.isActive));
       } catch (error) {

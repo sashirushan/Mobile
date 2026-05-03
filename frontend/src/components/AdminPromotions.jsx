@@ -23,7 +23,7 @@ const AdminPromotions = ({ onDownloadReport }) => {
 
   const fetchPromotions = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/promotions');
+      const res = await axios.get('https://ravishing-illumination-production.up.railway.app/api/promotions');
       setPromotions(res.data);
       setLoading(false);
     } catch (err) {
@@ -52,9 +52,9 @@ const AdminPromotions = ({ onDownloadReport }) => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/promotions/${editingId}`, formData);
+        await axios.put(`https://ravishing-illumination-production.up.railway.app/api/promotions/${editingId}`, formData);
       } else {
-        await axios.post('http://localhost:5000/api/promotions', formData);
+        await axios.post('https://ravishing-illumination-production.up.railway.app/api/promotions', formData);
       }
       setShowForm(false);
       setEditingId(null);
@@ -73,7 +73,7 @@ const AdminPromotions = ({ onDownloadReport }) => {
 
   const toggleActive = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/promotions/${id}/toggle`);
+      await axios.put(`https://ravishing-illumination-production.up.railway.app/api/promotions/${id}/toggle`);
       fetchPromotions();
     } catch (err) {
       alert('Failed to update status');
@@ -83,7 +83,7 @@ const AdminPromotions = ({ onDownloadReport }) => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this promotion?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/promotions/${id}`);
+        await axios.delete(`https://ravishing-illumination-production.up.railway.app/api/promotions/${id}`);
         fetchPromotions();
       } catch (err) {
         alert('Failed to delete promotion');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TextInput, RefreshControl, ImageBackground, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import axios from 'axios';
 import { API_BASE_URL } from '../../src/config/api';
@@ -9,7 +9,11 @@ export default function RentalsScreen() {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  
+  // Filter States
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMake, setSelectedMake] = useState('All');
+  const [selectedSort, setSelectedSort] = useState('Default');
 
   const fetchVehicles = async () => {
     try {
@@ -32,14 +36,33 @@ export default function RentalsScreen() {
     fetchVehicles();
   };
 
-  const filteredVehicles = vehicles.filter(v => 
-    v.make.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    v.model.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique makes for filter chips
+  const makes = ['All', ...new Set(vehicles.map(v => v.make))];
+  const sorts = ['Default', 'Rate: Low-High', 'Rate: High-Low'];
+
+  // Apply Filters and Sorting
+  let filteredVehicles = vehicles.filter(v => {
+    const matchesSearch = v.make.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          v.model.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesMake = selectedMake === 'All' || v.make === selectedMake;
+    return matchesSearch && matchesMake;
+  });
+
+  if (selectedSort === 'Rate: Low-High') {
+    filteredVehicles.sort((a, b) => a.pricePerDay - b.pricePerDay);
+  } else if (selectedSort === 'Rate: High-Low') {
+    filteredVehicles.sort((a, b) => b.pricePerDay - a.pricePerDay);
+  }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground 
+      source={require('../../assets/images/rent_portal_bg.png')} 
+      style={styles.container}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay} />
       <View style={styles.header}>
+        <Image source={require('../../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
         <Text style={styles.headerTitle}>Available Rentals</Text>
         <TextInput 
           style={styles.searchInput}
@@ -48,6 +71,37 @@ export default function RentalsScreen() {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
+        
+        {/* Filter Chips */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersContainer}>
+          <View style={styles.filterGroup}>
+            <Text style={styles.filterLabel}>Brand:</Text>
+            {makes.map(make => (
+              <TouchableOpacity 
+                key={`make-${make}`} 
+                style={[styles.chip, selectedMake === make && styles.chipActive]}
+                onPress={() => setSelectedMake(make)}
+              >
+                <Text style={[styles.chipText, selectedMake === make && styles.chipTextActive]}>{make}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+        
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersContainer}>
+          <View style={styles.filterGroup}>
+            <Text style={styles.filterLabel}>Sort:</Text>
+            {sorts.map(sort => (
+              <TouchableOpacity 
+                key={`sort-${sort}`} 
+                style={[styles.chip, selectedSort === sort && styles.chipActive]}
+                onPress={() => setSelectedSort(sort)}
+              >
+                <Text style={[styles.chipText, selectedSort === sort && styles.chipTextActive]}>{sort}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </View>
 
       {loading ? (
@@ -56,7 +110,7 @@ export default function RentalsScreen() {
         </View>
       ) : filteredVehicles.length === 0 ? (
         <View style={styles.centerContent}>
-          <Text style={styles.noDataText}>No rental vehicles found</Text>
+          <Text style={styles.noDataText}>No rental vehicles match your filters</Text>
         </View>
       ) : (
         <FlatList 
@@ -76,7 +130,7 @@ export default function RentalsScreen() {
           }
         />
       )}
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -84,6 +138,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.8)',
   },
   header: {
     padding: 20,
@@ -95,8 +153,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 15,
+    color: '#34d399',
+    marginBottom: 10,
+  },
+  logo: {
+    width: 200,
+    height: 50,
+    marginBottom: 5,
   },
   searchInput: {
     backgroundColor: '#222',
@@ -105,6 +168,41 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#444',
+    marginBottom: 10,
+  },
+  filtersContainer: {
+    marginBottom: 10,
+  },
+  filterGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  filterLabel: {
+    color: '#888',
+    fontSize: 13,
+    fontWeight: 'bold',
+    marginRight: 5,
+  },
+  chip: {
+    paddingHorizontal: 15,
+    paddingVertical: 6,
+    borderRadius: 20,
+    backgroundColor: '#222',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  chipActive: {
+    backgroundColor: 'rgba(52, 211, 153, 0.2)',
+    borderColor: '#34d399',
+  },
+  chipText: {
+    color: '#aaa',
+    fontSize: 13,
+  },
+  chipTextActive: {
+    color: '#34d399',
+    fontWeight: 'bold',
   },
   listContent: {
     padding: 20,

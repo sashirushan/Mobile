@@ -31,7 +31,7 @@ const Sales = () => {
         Object.entries(filters).filter(([_, v]) => v !== '')
       ).toString();
 
-      const response = await fetch(`http://localhost:5000/api/sales?${queryParams}`);
+      const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/sales?${queryParams}`);
       const data = await response.json();
       setVehicles(data);
     } catch (error) {

@@ -13,7 +13,7 @@ const AdminUsers = ({ onDownloadReport }) => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/users');
+      const res = await axios.get('https://ravishing-illumination-production.up.railway.app/api/users');
       setUsers(res.data);
     } catch (err) {
       console.error(err);
@@ -48,7 +48,7 @@ const AdminUsers = ({ onDownloadReport }) => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this user? This cannot be undone.')) {
       try {
-        await axios.delete(`http://localhost:5000/api/users/${id}`);
+        await axios.delete(`https://ravishing-illumination-production.up.railway.app/api/users/${id}`);
         fetchUsers();
       } catch (err) {
         console.error(err);
@@ -60,9 +60,9 @@ const AdminUsers = ({ onDownloadReport }) => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/users/${editingId}`, formData);
+        await axios.put(`https://ravishing-illumination-production.up.railway.app/api/users/${editingId}`, formData);
       } else {
-        await axios.post('http://localhost:5000/api/users', formData);
+        await axios.post('https://ravishing-illumination-production.up.railway.app/api/users', formData);
       }
       setIsModalOpen(false);
       fetchUsers();

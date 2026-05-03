@@ -12,7 +12,7 @@ const AdminPayments = ({ onDownloadReport }) => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/bookings');
+      const res = await axios.get('https://ravishing-illumination-production.up.railway.app/api/bookings');
       setBookings(res.data);
     } catch (err) {
       console.error('Error fetching bookings:', err);
@@ -23,7 +23,7 @@ const AdminPayments = ({ onDownloadReport }) => {
 
   const handleUpdatePaymentStatus = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/bookings/${id}/payment-status`, { paymentStatus: status });
+      await axios.put(`https://ravishing-illumination-production.up.railway.app/api/bookings/${id}/payment-status`, { paymentStatus: status });
       fetchBookings(); // refresh list
     } catch (err) {
       console.error('Error updating payment status:', err);
@@ -34,7 +34,7 @@ const AdminPayments = ({ onDownloadReport }) => {
   const handleEndBooking = async (id) => {
     if (window.confirm('Are you sure you want to mark this booking as Completed?')) {
       try {
-        await axios.put(`http://localhost:5000/api/bookings/${id}/end`);
+        await axios.put(`https://ravishing-illumination-production.up.railway.app/api/bookings/${id}/end`);
         fetchBookings();
       } catch (err) {
         console.error(err);
@@ -46,7 +46,7 @@ const AdminPayments = ({ onDownloadReport }) => {
   const handleDeleteBooking = async (id) => {
     if (window.confirm('Are you sure you want to delete this booking record permanently? This cannot be undone.')) {
       try {
-        await axios.delete(`http://localhost:5000/api/bookings/${id}`);
+        await axios.delete(`https://ravishing-illumination-production.up.railway.app/api/bookings/${id}`);
         fetchBookings();
       } catch (err) {
         console.error(err);

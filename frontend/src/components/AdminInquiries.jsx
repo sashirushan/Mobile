@@ -10,7 +10,7 @@ const AdminInquiries = ({ onDownloadReport }) => {
   const fetchInquiries = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/inquiries');
+      const response = await fetch('https://ravishing-illumination-production.up.railway.app/api/inquiries');
       const data = await response.json();
       setInquiries(data);
     } catch (error) {
@@ -27,7 +27,7 @@ const AdminInquiries = ({ onDownloadReport }) => {
   const handleUpdateStatus = async (id, status) => {
     try {
       setProcessing(id);
-      const response = await fetch(`http://localhost:5000/api/inquiries/${id}/status`, {
+      const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/inquiries/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -48,7 +48,7 @@ const AdminInquiries = ({ onDownloadReport }) => {
     
     try {
       setProcessing(id);
-      const response = await fetch(`http://localhost:5000/api/inquiries/${id}/reply`, {
+      const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/inquiries/${id}/reply`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ replyMessage: replyText[id] })
@@ -75,7 +75,7 @@ const AdminInquiries = ({ onDownloadReport }) => {
     
     try {
       setProcessing(id);
-      const response = await fetch(`http://localhost:5000/api/inquiries/${id}`, {
+      const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/inquiries/${id}`, {
         method: 'DELETE'
       });
       

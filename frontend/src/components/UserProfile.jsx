@@ -35,7 +35,7 @@ const UserProfile = () => {
           return;
         }
 
-        const resUsers = await axios.get('http://localhost:5000/api/users');
+        const resUsers = await axios.get('https://ravishing-illumination-production.up.railway.app/api/users');
         const loggedInUsername = localStorage.getItem('username');
         let currentUser = null;
         
@@ -60,12 +60,12 @@ const UserProfile = () => {
           });
 
           // Fetch History
-          const resHistory = await axios.get(`http://localhost:5000/api/bookings/user/${currentUser._id}`);
+          const resHistory = await axios.get(`https://ravishing-illumination-production.up.railway.app/api/bookings/user/${currentUser._id}`);
           setHistory(resHistory.data);
 
           // Fetch Inquiries
           if (currentUser.email) {
-            const resInquiries = await axios.get(`http://localhost:5000/api/inquiries/user/${currentUser.email}`);
+            const resInquiries = await axios.get(`https://ravishing-illumination-production.up.railway.app/api/inquiries/user/${currentUser.email}`);
             setUserInquiries(resInquiries.data);
           }
         }
@@ -82,7 +82,7 @@ const UserProfile = () => {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/users/${user._id}`, formData);
+      await axios.put(`https://ravishing-illumination-production.up.railway.app/api/users/${user._id}`, formData);
       setUser({ ...user, ...formData });
       setIsEditing(false);
       alert('Profile updated successfully!');
@@ -95,10 +95,10 @@ const UserProfile = () => {
   const handleCancelBooking = async (bookingId) => {
     if (!window.confirm('Are you sure you want to cancel this booking?')) return;
     try {
-      await axios.put(`http://localhost:5000/api/bookings/${bookingId}/cancel`);
+      await axios.put(`https://ravishing-illumination-production.up.railway.app/api/bookings/${bookingId}/cancel`);
       alert('Your booking canceled. we will contact you soon for the refund.');
       // Refresh history
-      const resHistory = await axios.get(`http://localhost:5000/api/bookings/user/${user._id}`);
+      const resHistory = await axios.get(`https://ravishing-illumination-production.up.railway.app/api/bookings/user/${user._id}`);
       setHistory(resHistory.data);
     } catch (err) {
       console.error(err);
@@ -109,9 +109,9 @@ const UserProfile = () => {
   const handleEndBooking = async (id) => {
     if (window.confirm('Are you sure you want to end this booking and return the vehicle?')) {
       try {
-        await axios.put(`http://localhost:5000/api/bookings/${id}/end`);
+        await axios.put(`https://ravishing-illumination-production.up.railway.app/api/bookings/${id}/end`);
         // Refresh history
-        const resHistory = await axios.get(`http://localhost:5000/api/bookings/user/${user._id}`);
+        const resHistory = await axios.get(`https://ravishing-illumination-production.up.railway.app/api/bookings/user/${user._id}`);
         setHistory(resHistory.data);
       } catch (err) {
         console.error(err);
@@ -130,7 +130,7 @@ const UserProfile = () => {
   const submitReview = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/api/rentals/${selectedVehicle._id}/reviews`, {
+      await axios.post(`https://ravishing-illumination-production.up.railway.app/api/rentals/${selectedVehicle._id}/reviews`, {
         userId: user._id,
         username: user.fullName || user.username,
         rating,

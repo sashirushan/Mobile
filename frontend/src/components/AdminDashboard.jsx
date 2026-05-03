@@ -43,7 +43,7 @@ const AdminDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/admin/stats');
+      const res = await fetch('https://ravishing-illumination-production.up.railway.app/api/admin/stats');
       const data = await res.json();
       if (data.success) {
         setStats(data.stats);
@@ -59,7 +59,7 @@ const AdminDashboard = () => {
   const handleDownloadReport = async (type = 'overview') => {
     try {
       setDownloading(true);
-      const response = await fetch(`http://localhost:5000/api/admin/report/weekly/${type}`);
+      const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/admin/report/weekly/${type}`);
       
       if (!response.ok) throw new Error('Failed to download report');
 

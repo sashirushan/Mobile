@@ -8,7 +8,7 @@ const AdminReviews = ({ onDownloadReport }) => {
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/reviews');
+      const res = await axios.get('https://ravishing-illumination-production.up.railway.app/api/admin/reviews');
       setReviews(res.data);
     } catch (err) {
       console.error(err);
@@ -24,7 +24,7 @@ const AdminReviews = ({ onDownloadReport }) => {
   const handleDelete = async (vehicleId, reviewId) => {
     if (window.confirm('Are you sure you want to delete this review? The average rating for this vehicle will be automatically recalculated.')) {
       try {
-        await axios.delete(`http://localhost:5000/api/rentals/${vehicleId}/reviews/${reviewId}`);
+        await axios.delete(`https://ravishing-illumination-production.up.railway.app/api/rentals/${vehicleId}/reviews/${reviewId}`);
         fetchReviews();
       } catch (err) {
         console.error(err);

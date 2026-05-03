@@ -61,7 +61,7 @@ const PaymentPage = () => {
     setPromoError('');
     setPromoMessage('');
     try {
-      const res = await fetch(`http://localhost:5000/api/promotions/verify/${promoCode}`);
+      const res = await fetch(`https://ravishing-illumination-production.up.railway.app/api/promotions/verify/${promoCode}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setDiscountPercentage(data.discountPercentage);
@@ -108,7 +108,7 @@ const PaymentPage = () => {
     
     try {
       // Find current user
-      const resUsers = await fetch('http://localhost:5000/api/users');
+      const resUsers = await fetch('https://ravishing-illumination-production.up.railway.app/api/users');
       const users = await resUsers.json();
       const loggedInUsername = localStorage.getItem('username');
       let currentUser = null;
@@ -127,7 +127,7 @@ const PaymentPage = () => {
         throw new Error('Please log in to book a vehicle');
       }
       
-      const response = await fetch('http://localhost:5000/api/bookings', {
+      const response = await fetch('https://ravishing-illumination-production.up.railway.app/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -15,7 +15,7 @@ const AdminSales = ({ onDownloadReport }) => {
   const fetchVehicles = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/sales');
+      const res = await axios.get('https://ravishing-illumination-production.up.railway.app/api/sales');
       setVehicles(res.data);
     } catch (err) {
       console.error(err);
@@ -42,7 +42,7 @@ const AdminSales = ({ onDownloadReport }) => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/sales/${id}`);
+        await axios.delete(`https://ravishing-illumination-production.up.railway.app/api/sales/${id}`);
         fetchVehicles();
       } catch (err) {
         console.error(err);
@@ -54,9 +54,9 @@ const AdminSales = ({ onDownloadReport }) => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/sales/${editingId}`, formData);
+        await axios.put(`https://ravishing-illumination-production.up.railway.app/api/sales/${editingId}`, formData);
       } else {
-        await axios.post('http://localhost:5000/api/sales', formData);
+        await axios.post('https://ravishing-illumination-production.up.railway.app/api/sales', formData);
       }
       setIsModalOpen(false);
       fetchVehicles();

@@ -15,7 +15,7 @@ const SaleVehicleDetails = () => {
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/sales/${id}`);
+        const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/sales/${id}`);
         if (!response.ok) throw new Error('Vehicle not found');
         const data = await response.json();
         setVehicle(data);
@@ -28,7 +28,7 @@ const SaleVehicleDetails = () => {
 
     const fetchPromotions = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/promotions`);
+        const response = await fetch(`https://ravishing-illumination-production.up.railway.app/api/promotions`);
         const data = await response.json();
         setPromotions(data.filter(p => p.type === 'Sale' && p.isActive));
       } catch (error) {
@@ -52,7 +52,7 @@ const SaleVehicleDetails = () => {
       const username = localStorage.getItem('username');
       if (!username) throw new Error('Please log in to send an inquiry');
       
-      const response = await fetch('http://localhost:5000/api/inquiries', {
+      const response = await fetch('https://ravishing-illumination-production.up.railway.app/api/inquiries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
